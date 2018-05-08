@@ -38,8 +38,14 @@ GLuint compileShader(const char* &shaderFile, GLenum type)
   // check compilation
   glGetShaderiv(shader, GL_COMPILE_STATUS, &compileResult);
   if(GL_FALSE == compileResult){
-    std::cerr << "Error: shader created but compilation failed.\n";
-    exit(1);
+    GLsizei len;
+    glGetShaderiv( shader, GL_INFO_LOG_LENGTH, &len );
+
+    GLchar* log = new GLchar[len];
+    glGetShaderInfoLog( shader, len, &len, log );
+    std::cerr << "shader compilation failed: " << log << std::endl;
+    delete [] log;
+    return 0;
   }
   delete []shaderCode;
   return shader;
