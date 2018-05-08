@@ -36,14 +36,12 @@ int main(void)
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
-  initVAO();
-  initVBO();
-  initCBO();
+  initBuffers();
   initShader(vertShaderFileName,fragShaderFileName);
 
   createAndSendMVP();
 
-
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {

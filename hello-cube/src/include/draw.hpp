@@ -1,9 +1,8 @@
 #ifndef DRAW_HPP
 #define DRAW_HPP
 void drawCube();
-void initVAO();
-void initVBO();
-void initCBO();
+void initBuffers();
+
 void initShader(const char *&VShaderFile,
                 const char *&FShaderFile);
 void createAndSendMVP();
