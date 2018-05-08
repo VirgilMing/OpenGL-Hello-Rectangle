@@ -6,6 +6,8 @@
 #include <string>
 #include <iostream>
 #include <cstring>
+// #include <CoreFoundation/CoreFoundation.h>
+// #include <CoreFoundation/CFString.h>
 
 const char *textFileRead(const char *filename){
   std::ifstream shaderFile(filename);
@@ -18,7 +20,6 @@ const char *textFileRead(const char *filename){
   return ret;
 }
 
-
 GLuint compileShader(const char* &shaderFile, GLenum type)
 {
   // creation
@@ -30,6 +31,7 @@ GLuint compileShader(const char* &shaderFile, GLenum type)
   }
   // 
   const char *shaderCode = textFileRead(shaderFile);
+  // const char *shaderCode = textFileReadCF(shaderFile);
   const char *codeArr[1] = {shaderCode};
 
   glShaderSource(shader, 1, codeArr, nullptr);
@@ -67,15 +69,15 @@ void linkShader(GLuint &shaderProgHandle, int num, ...)
   if(GL_FALSE == linkStatus)
   {
     std::cerr << "Error: link failed\n";
-    exit(1);
+        exit(1);
   }
   else{
     glUseProgram(shaderProgHandle);
   }
 }
 
-void initShader(const char *VShaderFile,
-                const char *FShaderFile)
+void initShader(const char *&VShaderFile,
+                const char *&FShaderFile)
 {
   vShader = compileShader(VShaderFile, GL_VERTEX_SHADER);
   fShader = compileShader(FShaderFile, GL_FRAGMENT_SHADER);

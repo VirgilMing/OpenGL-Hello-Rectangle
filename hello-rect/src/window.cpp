@@ -2,6 +2,8 @@
 #include "include/draw.hpp"
 #include <iostream>
 
+const char * vertShaderFileName = "rect.vert";
+const char * fragShaderFileName = "rect.frag";
 int main(void)
 {
   /* Initialize the library */
@@ -34,8 +36,9 @@ int main(void)
   glEnable(GL_DEPTH_TEST); // enable depth-testing
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
+  // fprintf(stderr, "&vertShaderFileName = %p\n", vertShaderFileName);
 
-  initShader("rect.vert","rect.frag");
+  initShader(vertShaderFileName,fragShaderFileName);
   initVBO();
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
