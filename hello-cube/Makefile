@@ -55,7 +55,10 @@ $(UnixExec): $(Objects) $(Shaders)
 	cp $(Shaders) $(UnixExecDir)
 
 $(Objects): $(BuildDir)/%.o: $(SourceDir)/%.cpp 
-	-$(CC) $(CCFLAGS) $< -o $@
+	$(CC) $(CCFLAGS) $< -o $@
+
+test:
+	cd $(UnixExecDir); ./$(ProductName)
 
 .PHONY: clean
 clean:
