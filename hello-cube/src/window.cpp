@@ -37,7 +37,13 @@ int main(void)
   glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   initVAO();
+  initVBO();
+  initCBO();
   initShader(vertShaderFileName,fragShaderFileName);
+
+  createAndSendMVP();
+
+
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
