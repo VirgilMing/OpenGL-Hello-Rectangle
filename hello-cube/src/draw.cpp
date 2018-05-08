@@ -9,7 +9,7 @@ float points[] = {
 };
 GLuint vShader, fShader, shaderProgram;
 GLuint vaoHandle, vboHandle;
-void initVBO(){
+void initVAO(){
   vboHandle = 0;
   glGenBuffers(1, &vboHandle);
   glBindBuffer(GL_ARRAY_BUFFER, vboHandle);
