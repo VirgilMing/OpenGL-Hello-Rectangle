@@ -20,7 +20,7 @@ int main(void)
 
 
   /* Create a windowed mode window and its OpenGL context */
-  GLFWwindow* window = glfwCreateWindow(640, 480, "The First OpenGL Program", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(480, 480, "The First OpenGL Program", NULL, NULL);
   if (!window) {
     std::cerr << "Window creation fail\n";
     glfwTerminate();
