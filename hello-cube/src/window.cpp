@@ -20,7 +20,7 @@ int main(void)
 
 
   /* Create a windowed mode window and its OpenGL context */
-  GLFWwindow* window = glfwCreateWindow(640, 480, "The Perspective Projection Program", NULL, NULL);
+  GLFWwindow* window = glfwCreateWindow(480, 480, "The Perspective Projection Program", NULL, NULL);
   if (!window) {
     std::cerr << "Window creation fail\n";
     glfwTerminate();
@@ -34,14 +34,12 @@ int main(void)
 
   // tell GL to only draw onto a pixel if the shape is closer to the viewer
   glEnable(GL_DEPTH_TEST); // enable depth-testing
-  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
 
   initBuffers();
   initShader(vertShaderFileName,fragShaderFileName);
 
   createAndSendMVP();
-
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glClearColor(1.0f, 1.0f, 1.0f, 0.0f);
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {

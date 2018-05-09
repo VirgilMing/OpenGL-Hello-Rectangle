@@ -6,35 +6,56 @@
 #include <glm/trigonometric.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 static const GLfloat g_vertex_buffer_data[] = {
-  -1.0f,-1.0f,-1.0f, 
-  -1.0f, 1.0f,-1.0f, 
-   1.0f,-1.0f,-1.0f, 
-   1.0f, 1.0f,-1.0f, 
   -1.0f,-1.0f, 1.0f,
-  -1.0f, 1.0f, 1.0f, 
    1.0f,-1.0f, 1.0f, 
    1.0f, 1.0f, 1.0f, 
+  -1.0f, 1.0f, 1.0f, 
+  -1.0f,-1.0f,-1.0f, 
+   1.0f,-1.0f,-1.0f, 
+   1.0f, 1.0f,-1.0f, 
+  -1.0f, 1.0f,-1.0f, 
 };
 
-static const GLfloat g_color_buffer_data[] = {
-  0.583f,  0.771f,  0.014f,
-  0.609f,  0.115f,  0.436f,
-  0.327f,  0.483f,  0.844f,
-  0.822f,  0.569f,  0.201f,
-  0.435f,  0.602f,  0.223f,
-  0.310f,  0.747f,  0.185f,
-  0.597f,  0.770f,  0.761f,
-  0.559f,  0.436f,  0.730f,
-};
+// static const GLfloat g_color_buffer_data[] = {
+//   1.0f, 0.5f, 0.2f,
+//   0.2f, 1.0f, 0.5f
+
+// };
 
 unsigned short indices[] = {
-  0,1, 0,2, 1,3, 2,3,
+  0,1, 1,2, 0,3, 2,3,
   0,4, 1,5, 2,6, 3,7,
-  4,5, 4,6, 5,7, 6,7
+  4,5, 5,6, 4,7, 6,7,
+
+  0, 1, 2,
+  2, 3, 0,
+  // top
+  3, 2, 6,
+  6, 7, 3,
+  // back
+  7, 6, 5,
+  5, 4, 7,
+  // bottom
+  4, 5, 1,
+  1, 0, 4,
+  // left
+  4, 0, 3,
+  3, 7, 4,
+  // right
+  1, 5, 6,
+  6, 2, 1,
+  1, 3, 4,
+  1, 2, 3
+
+
 };
 
+
 GLuint vShader, fShader, shaderProgram;
-GLuint vaoHandle, vboHandle, cboHandle, eboHandle;
+GLuint vaoHandle;
+GLuint vboHandle;
+// GLuint cboHandle;
+GLuint eboHandle;
 
 
 void initVAO(){
@@ -50,12 +71,12 @@ void initVBO(){
                GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(
-     0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
-     3,                  // size
-     GL_FLOAT,           // type
-     GL_FALSE,           // normalized?
-     0,                  // stride
-     (void*)0            // array buffer offset
+    0,                  // attribute 0. No particular reason for 0, but must match the layout in the shader.
+    3,                  // size
+    GL_FLOAT,           // type
+    GL_FALSE,           // normalized?
+    0,                  // stride
+    (void*)0            // array buffer offset
   );
 
 }
@@ -65,35 +86,18 @@ void initEBO(){
   glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 }
 
-void initCBO(){
-  glGenBuffers(1, &cboHandle);
-  glBindBuffer(GL_ARRAY_BUFFER, cboHandle);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(g_color_buffer_data), g_color_buffer_data, GL_STATIC_DRAW);
-  // 2nd attribute buffer : colors
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(
-      1,                 // attribute. No particular reason for 1, but must match the layout in the shader.
-      3,                 // size
-      GL_FLOAT,          // type
-      GL_FALSE,          // normalized?
-      0,                 // stride
-      (void*)0           // array buffer offset
-  );
-
-}
 
 void initBuffers(){
   initVAO(); // vertex array object
   initVBO(); // vertex buffer object
   initEBO(); //
-  initCBO(); // 
 }
 
 
 void createAndSendMVP(){
   glm::mat4 projectionMat = glm::perspective(
     glm::radians(45.f),
-    4.0f/3.0f,
+    1.0f,
     0.1f,
     100.0f
   );
@@ -116,7 +120,30 @@ void createAndSendMVP(){
 void drawCube(){
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(shaderProgram);
+
+  GLint vertexColorLocation;
+
+  glDepthFunc(GL_LESS); // depth-testing interprets a smaller value as "closer"
+  vertexColorLocation = glGetUniformLocation(shaderProgram, "uColor");
+  glUseProgram(shaderProgram);
+  glUniform4f(vertexColorLocation, 0.2f, 1.0f, 0.2f, 1.0f);
   glBindVertexArray(vaoHandle);
-  // draw points 0-4 from the currently bound vao with current in-use shader
-  glDrawElements(GL_LINES, sizeof(indices)/sizeof(unsigned short), GL_UNSIGNED_SHORT, 0); // 12*3 indices starting at 0 -> 12 triangles -> 6 squares
+
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(unsigned short) - 24, GL_UNSIGNED_SHORT, (void*)24);
+  glBindVertexArray(0);
+
+  glClear(GL_DEPTH_BUFFER_BIT);
+
+  glDepthFunc(GL_ALWAYS); // depth-testing interprets a smaller value as "closer"
+  vertexColorLocation = glGetUniformLocation(shaderProgram, "uColor");
+  glUseProgram(shaderProgram);
+  glUniform4f(vertexColorLocation, 0.f, 0.f, 0.f,1.0f);
+  glBindVertexArray(vaoHandle);
+
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glDrawElements(GL_LINES, 24, GL_UNSIGNED_SHORT, 0);
+  glBindVertexArray(0);
+
 }
